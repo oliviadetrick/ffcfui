@@ -1,22 +1,38 @@
 <template>
     <BSNavBar nav-brand="FFCF" nav-class="navbar-dark" toggle-id="nav-main">
-        <BSNavBarNav v-on:switchView="switchView" :items="views" />
+        <BSNavBarNav :items="views" />
         <BSNavSearch id="searchBox" @select="onSelectRecipe" />
     </BSNavBar>
     <div class="row g-1">
+        <Index
+            id="index"
+            v-show="views[0].active"
+        />
         <RecipeList
             id="recipeList"
             :items="recipes"
             v-on:itemChanged="onRecipeChanged"
             v-on:itemRemoved="onRecipeRemoved"
+            v-show="!views[0].active"
         />
         <ShoppingList
             id="shoppingList"
             :nodes="shoppingData"
             v-on:sort="onShoppingSorted"
+            v-show="views[1].active"
         />
-        <CraftingGuide id="craftingGuide" :nodes="nodes" :links="links" />
-        <CraftingDiagram id="sankeyDiagram" :nodes="nodes" :links="links" />
+        <CraftingGuide
+            id="craftingGuide"
+            :nodes="nodes" 
+            :links="links"
+            v-show="views[2].active"
+        />
+        <CraftingDiagram
+            id="sankeyDiagram"
+            :nodes="nodes"
+            :links="links"
+            v-show="views[3].active"
+        />
     </div>
 </template>
 
@@ -28,6 +44,7 @@
     import BSNavSearch from "./components/BSNavSearch.vue";
     import CraftingDiagram from "./components/CraftingDiagram.vue";
     import CraftingGuide from "./components/CraftingGuide.vue";
+    import Index from "./components/Index.vue";
     import RecipeList from "./components/RecipeList.vue";
     import ShoppingList from "./components/ShoppingList.vue";
 
@@ -39,6 +56,7 @@
             BSNavSearch,
             CraftingDiagram,
             CraftingGuide,
+            Index,
             RecipeList,
             ShoppingList,
         },
@@ -69,6 +87,11 @@
                 views: [
                     {
                         active: true,
+                        text: "Home",
+                        name: "index",
+                    },
+                    {
+                        active: false,
                         text: "Materials List",
                         name: "list",
                     },
@@ -116,54 +139,28 @@
             },
         },
         methods: {
-            addRecipe: async function(id) {
-                if (this.recipes.findIndex(r => r._id === id) < 0) {
-                    let data = await json("http://localhost:3000/recipe/" + id);
-                    if (data !== undefined) {
-                        data.Multiplier = 1;
-                        this.recipes.push(data);
-                        this.addRecipeNode(data);
-                    }
-                }
-            },
-            addRecipeNode: function(recipe) {
-                // create recipe node if needed
-                let recipeNode = this.getNode(recipe.Result._id);
-                if (recipeNode === null) {
-                    recipeNode = this.createNode(recipe);
-                    this.pushNode(recipeNode);
-                }
-                // create crafting node and link
+            addRecipe: function(recipe) {
+                let resultNode = this.getOrCreateNode(recipe.Result, false, recipe.Multiplier);
+                resultNode.Resource = false;
                 let craftNode = this.createNode(recipe.CraftType);
                 this.pushNode(craftNode);
-                this.links.push(
-                    this.createLink(
-                        craftNode,
-                        recipeNode,
-                        recipeNode.Quantity
-                    )
-                );
-                // create ingredient nodes and links
-                for (let i = 0; i < recipeNode.Ingredients.length; i++) {
-                    let ingredient = recipeNode.Ingredients[i];
-                    let ingredientNode = this.getNode(ingredient.ItemID);
-                    if (ingredientNode === null) {
-                        if (ingredient.Item.Recipe) {
-                            ingredientNode = this.addRecipeNode(ingredient.Item.Recipe);
-                        } else {
-                            ingredientNode = this.createNode(ingredient.Item);
-                            this.pushNode(ingredientNode);
-                        }
-                    }
-                    this.links.push(
-                        this.createLink(
+                this.links.push(this.createLink(
+                    craftNode,
+                    resultNode,
+                    recipe.Amount_Result * recipe.Multiplier
+                ));
+                for (let i = 0; i < recipe.Ingredients.length; i++) {
+                    let ingredient = recipe.Ingredients[i];
+                    if(typeof ingredient._id === "number") {
+                        let ingredientNode = this.getOrCreateNode(ingredient, true, recipe.Multiplier);
+                        this.links.push(this.createLink(
                             ingredientNode,
                             craftNode,
-                            ingredient.Amount
-                        )
-                    );
+                            recipe.Amount_Ingredient[i] * recipe.Multiplier
+                        ));
+                    }
                 }
-                return recipeNode;
+                return resultNode;
             },
             createLink: function(source, target, value) {
                 return {
@@ -180,26 +177,7 @@
                         ItemID: this.craftingIndex,
                         Name: this.craftingTypes[source],
                     };
-                } else if (source.Result) {
-                    // recipe
-                    let node = {
-                        ItemID: source.Result._id,
-                        Name: source.Result.Name,
-                        Icon: source.Result.Icon,
-                        Quantity: source.Amount_Result,
-                        Ingredients: [],
-                    };
-                    for (let i = 0; i < source.Item_Ingredient.length; i++) {
-                        if (source.Item_Ingredient[i] > 0) {
-                            node.Ingredients.push({
-                                ItemID: source.Item_Ingredient[i],
-                                Item: source.Ingredients[i],
-                                Amount: source.Amount_Ingredient[i],
-                            });
-                        }
-                    }
-                    return node;
-                } else if (source.Name) {
+                } else {
                     // item
                     return {
                         ItemID: source._id,
@@ -214,8 +192,28 @@
                 let i = this.nodes.findIndex(n => n.ItemID === id);
                 return i >= 0 ? this.nodes[i] : null;
             },
-            hasNode: function(id) {
-                return this.nodes.findIndex(n => n.ItemID === id) >= 0;
+            getOrCreateNode: function(ingredient, checkRecipe, parentMultiplier) {
+                let node = this.getNode(ingredient.ItemID);
+                if(node === null) {
+                    if (ingredient.Recipe && checkRecipe) {
+                        ingredient.Recipe.Multiplier = parentMultiplier
+                        node = this.addRecipe(ingredient.Recipe);
+                    } else {
+                        node = this.createNode(ingredient);
+                        this.pushNode(node);
+                    }
+                }
+                return node;
+            },
+            loadRecipe: async function(id) {
+                if (this.recipes.findIndex(r => r._id === id) < 0) {
+                    let data = await json("http://localhost:3000/recipe/" + id);
+                    if (typeof data === "object") {
+                        data.Multiplier = 1;
+                        this.recipes.push(data);
+                        this.addRecipe(data);
+                    }
+                }
             },
             onRecipeChanged: function(recipe, newValue) {
                 let i = this.recipes.indexOf(recipe);
@@ -232,7 +230,7 @@
                 }
             },
             onSelectRecipe: async function(value) {
-                await this.addRecipe(value);
+                await this.loadRecipe(value);
             },
             onShoppingSorted: function(columnLink) {
                 if (!(columnLink instanceof PointerEvent)) {
@@ -262,42 +260,7 @@
                 this.nodeIDs.splice(0, this.nodeIDs.length);
                 this.craftingIndex = 0;
                 for (let i = 0; i < this.recipes.length; i++) {
-                    this.addRecipeNode(this.recipes[i]);
-                }
-            },
-            switchView: function(item) {
-                if (item.active) {
-                    if (item.name === "diagram") {
-                        document
-                            .getElementById("sankeyDiagram")
-                            .classList.remove("d-none");
-                        document
-                            .getElementById("shoppingList")
-                            .classList.add("d-none");
-                        document
-                            .getElementById("craftingGuide")
-                            .classList.add("d-none");
-                    } else if (item.name === "list") {
-                        document
-                            .getElementById("sankeyDiagram")
-                            .classList.add("d-none");
-                        document
-                            .getElementById("shoppingList")
-                            .classList.remove("d-none");
-                        document
-                            .getElementById("craftingGuide")
-                            .classList.add("d-none");
-                    } else {
-                        document
-                            .getElementById("sankeyDiagram")
-                            .classList.add("d-none");
-                        document
-                            .getElementById("shoppingList")
-                            .classList.add("d-none");
-                        document
-                            .getElementById("craftingGuide")
-                            .classList.remove("d-none");
-                    }
+                    this.addRecipe(this.recipes[i]);
                 }
             }
         },

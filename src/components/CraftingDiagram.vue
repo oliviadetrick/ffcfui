@@ -1,5 +1,5 @@
 <template>
-    <div class="container d-none">
+    <div class="container">
         <h1 class="display-6 text-light">Diagram</h1>
         <div class="d-flex justify-content-center">
             <div class="container">
@@ -69,17 +69,17 @@
                         this.width,
                         this.height,
                     ]);
-                    let graph = this.sankey({
+                    let data = {
                         nodes: toRaw(this.nodes),
                         links: toRaw(this.links),
-                    });
+                    }
+                    let graph = this.sankey(data);
                     //merge like crafting
                     if (this.combineNodes) {
                         let links = {};
                         let redundant = [];
                         for (let i = 0; i < graph.nodes.length; i++) {
                             let item = graph.nodes[i];
-                            console.log(item);
                             if (item.ItemID < 0) {
                                 let key = `${item.Name}_${item.depth}`;
                                 if (typeof links[key] === "object") {

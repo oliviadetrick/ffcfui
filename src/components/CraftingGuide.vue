@@ -58,7 +58,7 @@
             }, "Crafting Guide");
             //wrap it up in hidden div
             return h("div", {
-                "class": "container d-none"
+                "class": "container"
             }, header, list);
         }
     };
