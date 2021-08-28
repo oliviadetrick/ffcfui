@@ -67,16 +67,6 @@
                 nodes: [],
                 recipes: [],
                 links: [],
-                craftingTypes: [
-                    "Carpentry",
-                    "Blacksmithing",
-                    "Armorsmithing",
-                    "Goldsmithing",
-                    "Leatherworking",
-                    "Weaving",
-                    "Alchemy",
-                    "Culinary",
-                ],
                 sortInfo: {
                     shopping: {
                         count: null,
@@ -140,23 +130,33 @@
         },
         methods: {
             addRecipe: function(recipe) {
-                let resultNode = this.getOrCreateNode(recipe.Result, false, recipe.Multiplier);
+                let resultNode = this.getOrCreateNode(recipe.ItemResult);
                 resultNode.Resource = false;
                 let craftNode = this.createNode(recipe.CraftType);
                 this.pushNode(craftNode);
                 this.links.push(this.createLink(
                     craftNode,
                     resultNode,
-                    recipe.Amount_Result * recipe.Multiplier
+                    recipe.AmountResult * recipe.Multiplier
                 ));
-                for (let i = 0; i < recipe.Ingredients.length; i++) {
-                    let ingredient = recipe.Ingredients[i];
-                    if(typeof ingredient._id === "number") {
-                        let ingredientNode = this.getOrCreateNode(ingredient, true, recipe.Multiplier);
+                for (let i = 0; i <= 9; i++) {
+                    let ingredient = recipe["ItemIngredient" + i];
+                    let ingredientRecipe = recipe["ItemIngredientRecipe" + i];
+                    let ingredientNode = null;
+                    if(typeof ingredientRecipe === "object" && ingredientRecipe !== null) {
+                        if(Array.isArray(ingredientRecipe)) {
+                            ingredientRecipe = ingredientRecipe[0];
+                        }
+                        ingredientRecipe.Multiplier = recipe.Multiplier;
+                        ingredientNode = this.addRecipe(ingredientRecipe);
+                    } else if(typeof ingredient === "object" && ingredient !== null) {
+                        ingredientNode = this.getOrCreateNode(ingredient);
+                    }
+                    if(ingredient !== null) {
                         this.links.push(this.createLink(
                             ingredientNode,
                             craftNode,
-                            recipe.Amount_Ingredient[i] * recipe.Multiplier
+                            parseInt(recipe["AmountIngredient" + i]) * recipe.Multiplier
                         ));
                     }
                 }
@@ -170,17 +170,17 @@
                 };
             },
             createNode: function(source) {
-                if (typeof source === "number") {
+                if (source.MainPhysical) {
                     // crafting
                     this.craftingIndex = this.craftingIndex - 1;
                     return {
                         ItemID: this.craftingIndex,
-                        Name: this.craftingTypes[source],
+                        Name: source.Name,
                     };
                 } else {
                     // item
                     return {
-                        ItemID: source._id,
+                        ItemID: source.ID,
                         Name: source.Name,
                         Description: source.Description,
                         Resource: typeof source.Recipe === "undefined",
@@ -192,22 +192,17 @@
                 let i = this.nodes.findIndex(n => n.ItemID === id);
                 return i >= 0 ? this.nodes[i] : null;
             },
-            getOrCreateNode: function(ingredient, checkRecipe, parentMultiplier) {
-                let node = this.getNode(ingredient.ItemID);
+            getOrCreateNode: function(ingredient) {
+                let node = this.getNode(ingredient.ID);
                 if(node === null) {
-                    if (ingredient.Recipe && checkRecipe) {
-                        ingredient.Recipe.Multiplier = parentMultiplier
-                        node = this.addRecipe(ingredient.Recipe);
-                    } else {
-                        node = this.createNode(ingredient);
-                        this.pushNode(node);
-                    }
+                    node = this.createNode(ingredient);
+                    this.pushNode(node);
                 }
                 return node;
             },
             loadRecipe: async function(id) {
-                if (this.recipes.findIndex(r => r._id === id) < 0) {
-                    let data = await json("http://localhost:3000/recipe/" + id);
+                if (this.recipes.findIndex(r => r.ID === id) < 0) {
+                    let data = await json("https://xivapi.com/recipe/" + id);
                     if (typeof data === "object") {
                         data.Multiplier = 1;
                         this.recipes.push(data);

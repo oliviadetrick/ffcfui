@@ -36,9 +36,9 @@ export default {
             this.$emit('select', value, option);
         },
         search: async function(query) {
-            let data = await json('http://localhost:3000/search?q=' + query);
-            return data.map((i) => {
-                return {value: i._id, label: i.Item.Name};
+            let data = await json('https://xivapi.com/search?indexes=recipe&string=' + query);
+            return data.Results.map((i) => {
+                return {value: i.ID, label: i.Name};
             });
         }
     }

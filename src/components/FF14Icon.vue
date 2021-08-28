@@ -6,10 +6,10 @@
 export default {    
     name: "FF14Icon",
     props: {
-        imageId: Number,
+        imageId: String,
         url: {
             type: String,
-            default: "http://localhost:3000/icons/"
+            default: "https://xivapi.com"
         }
     }
 }
