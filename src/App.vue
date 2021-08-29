@@ -208,6 +208,10 @@
                 if (this.recipes.findIndex(r => r.ID === id) < 0) {
                     let data = await json("https://xivapi.com/recipe/" + id);
                     if (typeof data === "object") {
+                        if(this.views[0].active) {
+                            this.views[0].active = false;
+                            this.views[1].active = true;
+                        }
                         data.Multiplier = 1;
                         this.recipes.push(data);
                         this.addRecipe(data);
