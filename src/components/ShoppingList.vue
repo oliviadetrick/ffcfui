@@ -44,7 +44,7 @@
                             }}</span>
                         </div>
                         <div class="col-8">
-                            <FF14Icon v-bind:image-id="node.Icon" />
+                            <FF14Icon v-bind:image-id="node.Icon" v-bind:title="node.Description" />
                             <span class="ms-2">{{ node.Name }}</span>
                         </div>
                     </div>

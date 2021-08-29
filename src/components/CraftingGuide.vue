@@ -43,6 +43,7 @@
                         ) {
                             let icon = h(FF14Icon, {
                                 "image-id": link.target.Icon,
+                                "title": link.target.Description
                             });
                             let text = h(
                                 "span",
