@@ -1,4 +1,3 @@
 module.exports = {
-    publicPath: "/ffcfui/",
-    outputDir: "docs"
+    publicPath: "/ffcfui/"
 };
