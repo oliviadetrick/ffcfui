@@ -123,6 +123,7 @@
                         .selectAll("rect")
                         .data(graph.nodes)
                         .join("rect")
+                        .attr("class", "s-node")
                         .attr("x", d => d.x0)
                         .attr("y", d => d.y0)
                         .attr("height", d => d.y1 - d.y0)
@@ -142,6 +143,7 @@
                         .join("g");
                     link.append("path")
                         .attr("d", sankeyLinkHorizontal())
+                        .attr("class", "s-link")
                         .attr("stroke", d => this.color(d.source))
                         .attr("stroke-width", d => Math.max(1, d.width));
                     link.append("title").text(d =>
@@ -169,7 +171,7 @@
                     return svg.node();
                 }
                 return null;
-            },
+            }
         },
         watch: {
             nodes: {
@@ -186,3 +188,14 @@
         },
     };
 </script>
+
+<style>
+.s-link {
+    fill: none;
+    stroke: #FFF;
+    stroke-opacity: .2;
+}
+.s-link:hover {
+    stroke-opacity: .5 !important;
+}
+</style>
