@@ -53,6 +53,25 @@
             RecipeList,
             ShoppingList,
         },
+        created: async function() {
+            const searchParams = new URLSearchParams(window.location.search);
+            let i = 0;
+            let value = searchParams.get(`i${i}`);
+            while(value !== null) {
+                let recipe = await this.loadRecipe(value);
+                if(recipe != null) {
+                    let m = parseInt(searchParams.get(`a${i}`));
+                    if(m !== m) {
+                        m = 1;
+                    }
+                    recipe.Multiplier = m;
+                }
+                value = searchParams.get(`i${++i}`);
+            }
+            if(i > 0) {
+                this.rebuild();
+            }
+        },
         data: function() {
             return {
                 craftingIndex: 0,
@@ -205,7 +224,8 @@
                 return node;
             },
             loadRecipe: async function(id) {
-                if (this.recipes.findIndex(r => r.ID === id) < 0) {
+                let i = this.recipes.findIndex(r => r.ID === id);
+                if (i < 0) {
                     let data = await json("https://xivapi.com/recipe/" + id);
                     if (typeof data === "object") {
                         if(this.views[0].active) {
@@ -215,8 +235,12 @@
                         data.Multiplier = 1;
                         this.recipes.push(data);
                         this.addRecipe(data);
+                        this.updateURL();
+                        return data;
                     }
+                    return null;
                 }
+                return this.recipes[i];
             },
             onRecipeChanged: function(recipe, newValue) {
                 let i = this.recipes.indexOf(recipe);
@@ -265,7 +289,23 @@
                 for (let i = 0; i < this.recipes.length; i++) {
                     this.addRecipe(this.recipes[i]);
                 }
+                this.updateURL();
             },
-        },
+            updateURL: function() {
+                let query = "";
+                let i = 0;
+                this.recipes.forEach(r => {
+                    query = query + (i === 0 ? "?" : "&");
+                    query = query + `i${i}=${r.ID}&a${i}=${r.Multiplier}`;
+                    i++;
+                });
+                if(query.length === 0) {
+                    window.history.replaceState(null, null, "?");
+                }
+                else {
+                    window.history.replaceState(null, null, query);
+                }
+            }
+        }
     };
 </script>
