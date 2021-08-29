@@ -9,7 +9,8 @@
             placeholder="Search"
             autocomplete="off"
             data-bs-toggle="dropdown"
-            aria-label="Search" />
+            aria-label="Search"
+        />
         <div class="dropdown-menu" />
     </div>
 </template>

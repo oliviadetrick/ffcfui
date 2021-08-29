@@ -4,35 +4,28 @@
         <BSNavSearch id="searchBox" @select="onSelectRecipe" />
     </BSNavBar>
     <div class="row g-1">
-        <Index
-            id="index"
-            v-show="views[0].active"
-        />
+        <Index id="index" v-show="views[0].active" />
         <RecipeList
             id="recipeList"
             :items="recipes"
             v-on:itemChanged="onRecipeChanged"
             v-on:itemRemoved="onRecipeRemoved"
-            v-show="!views[0].active"
-        />
+            v-show="!views[0].active"/>
         <ShoppingList
             id="shoppingList"
             :nodes="shoppingData"
             v-on:sort="onShoppingSorted"
-            v-show="views[1].active"
-        />
+            v-show="views[1].active"/>
         <CraftingGuide
             id="craftingGuide"
-            :nodes="nodes" 
+            :nodes="nodes"
             :links="links"
-            v-show="views[2].active"
-        />
+            v-show="views[2].active"/>
         <CraftingDiagram
             id="sankeyDiagram"
             :nodes="nodes"
             :links="links"
-            v-show="views[3].active"
-        />
+            v-show="views[3].active"/>
     </div>
 </template>
 
@@ -134,30 +127,41 @@
                 resultNode.Resource = false;
                 let craftNode = this.createNode(recipe.CraftType);
                 this.pushNode(craftNode);
-                this.links.push(this.createLink(
-                    craftNode,
-                    resultNode,
-                    recipe.AmountResult * recipe.Multiplier
-                ));
+                this.links.push(
+                    this.createLink(
+                        craftNode,
+                        resultNode,
+                        recipe.AmountResult * recipe.Multiplier
+                    )
+                );
                 for (let i = 0; i <= 9; i++) {
                     let ingredient = recipe["ItemIngredient" + i];
                     let ingredientRecipe = recipe["ItemIngredientRecipe" + i];
                     let ingredientNode = null;
-                    if(typeof ingredientRecipe === "object" && ingredientRecipe !== null) {
-                        if(Array.isArray(ingredientRecipe)) {
+                    if (
+                        typeof ingredientRecipe === "object" &&
+                        ingredientRecipe !== null
+                    ) {
+                        if (Array.isArray(ingredientRecipe)) {
                             ingredientRecipe = ingredientRecipe[0];
                         }
                         ingredientRecipe.Multiplier = recipe.Multiplier;
                         ingredientNode = this.addRecipe(ingredientRecipe);
-                    } else if(typeof ingredient === "object" && ingredient !== null) {
+                    } else if (
+                        typeof ingredient === "object" &&
+                        ingredient !== null
+                    ) {
                         ingredientNode = this.getOrCreateNode(ingredient);
                     }
-                    if(ingredient !== null) {
-                        this.links.push(this.createLink(
-                            ingredientNode,
-                            craftNode,
-                            parseInt(recipe["AmountIngredient" + i]) * recipe.Multiplier
-                        ));
+                    if (ingredient !== null) {
+                        this.links.push(
+                            this.createLink(
+                                ingredientNode,
+                                craftNode,
+                                parseInt(recipe["AmountIngredient" + i]) *
+                                    recipe.Multiplier
+                            )
+                        );
                     }
                 }
                 return resultNode;
@@ -194,7 +198,7 @@
             },
             getOrCreateNode: function(ingredient) {
                 let node = this.getNode(ingredient.ID);
-                if(node === null) {
+                if (node === null) {
                     node = this.createNode(ingredient);
                     this.pushNode(node);
                 }
@@ -257,7 +261,7 @@
                 for (let i = 0; i < this.recipes.length; i++) {
                     this.addRecipe(this.recipes[i]);
                 }
-            }
+            },
         },
     };
 </script>

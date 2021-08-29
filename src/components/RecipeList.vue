@@ -7,8 +7,8 @@
                     <label
                         class="col-sm-4 col-form-label"
                         v-bind:for="`recipe-${item._id}`">
-                            <FF14Icon v-bind:image-id="item.ItemResult.Icon" />
-                            {{ item.ItemResult.Name }}
+                        <FF14Icon v-bind:image-id="item.ItemResult.Icon" />
+                        {{ item.ItemResult.Name }}
                     </label>
                     <div class="col-sm-8">
                         <div class="input-group">
@@ -20,7 +20,7 @@
                                 v-bind:value="item.Multiplier"
                                 v-bind:title="item.ItemResult.Name"
                                 v-bind:placeholder="item.ItemResult.Name || ''"
-                                min="1" />
+                                min="1"/>
                             <button
                                 class="btn btn-outline-danger"
                                 type="button"
@@ -42,7 +42,7 @@
     export default {
         name: "RecipeList",
         components: {
-            FF14Icon
+            FF14Icon,
         },
         props: {
             items: Array,

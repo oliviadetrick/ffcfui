@@ -72,7 +72,7 @@
                     let data = {
                         nodes: toRaw(this.nodes),
                         links: toRaw(this.links),
-                    }
+                    };
                     let graph = this.sankey(data);
                     //merge like crafting
                     if (this.combineNodes) {

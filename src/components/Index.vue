@@ -16,7 +16,9 @@
         <p>
             I made this entirely from scratch but this site is
             <em>heavily</em> inspired by the wonderful
-            <a href="https://kirkmcdonald.github.io/" class="link-info">kirkmcdonald.github.io</a>
+            <a href="https://kirkmcdonald.github.io/" class="link-info">
+                kirkmcdonald.github.io
+            </a>
             so please check that out ~!
         </p>
     </div>

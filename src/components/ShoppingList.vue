@@ -13,14 +13,15 @@
                                 column-name="count"
                                 text="Count"
                                 title="Sort Count"
-                                v-on:click="sort" />
+                                v-on:click="sort"/>
                         </div>
                         <div class="col-8">
                             <SortColumnLink
                                 column-name="name"
                                 text="Name"
                                 title="Sort Name"
-                                v-on:click="sort" />
+                                v-on:click="sort"
+                            />
                         </div>
                     </div>
                 </div>
