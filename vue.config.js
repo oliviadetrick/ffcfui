@@ -1,3 +1,3 @@
 module.exports = {
-    publicPath: "/ffcfui/"
+    publicPath: process.env.NODE_ENV === "production" ? "/ffcfui/" : "/",
 };
