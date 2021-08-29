@@ -6,7 +6,8 @@
                 href="#"
                 v-bind:class="{ active: item.active }"
                 v-bind:aria-current="item.active ? 'page' : ''"
-                v-on:click="switchView(item)">
+                v-on:click="switchView(item)"
+            >
                 {{ item.text }}
             </a>
         </li>

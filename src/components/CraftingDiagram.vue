@@ -63,12 +63,7 @@
         methods: {
             generateSvg: function() {
                 if (this.nodes.length > 0) {
-                    const svg = create("svg").attr("viewBox", [
-                        0,
-                        0,
-                        this.width,
-                        this.height,
-                    ]);
+                    const svg = create("svg").attr("viewBox", [0, 0, this.width, this.height]);
                     let data = {
                         nodes: toRaw(this.nodes),
                         links: toRaw(this.links),
@@ -83,21 +78,13 @@
                             if (item.ItemID < 0) {
                                 let key = `${item.Name}_${item.depth}`;
                                 if (typeof links[key] === "object") {
-                                    for (
-                                        let j = 0;
-                                        j < graph.links.length;
-                                        j++
-                                    ) {
+                                    for (let j = 0; j < graph.links.length; j++) {
                                         let item2 = graph.links[j];
-                                        if (
-                                            item2.source.ItemID === item.ItemID
-                                        ) {
+                                        if (item2.source.ItemID === item.ItemID) {
                                             redundant.push(item.ItemID);
                                             item2.source = links[key].ItemID;
                                         }
-                                        if (
-                                            item2.target.ItemID === item.ItemID
-                                        ) {
+                                        if (item2.target.ItemID === item.ItemID) {
                                             redundant.push(item.ItemID);
                                             item2.target = links[key].ItemID;
                                         }
@@ -109,9 +96,7 @@
                         }
                         if (redundant.length > 0) {
                             new Set(redundant).forEach(id => {
-                                let i = graph.nodes.findIndex(
-                                    n => n.ItemID === id
-                                );
+                                let i = graph.nodes.findIndex(n => n.ItemID === id);
                                 if (i >= 0) {
                                     graph.nodes.splice(i, 1);
                                 }
@@ -130,9 +115,7 @@
                         .attr("width", d => d.x1 - d.x0)
                         .attr("fill", this.color)
                         .append("title")
-                        .text(d =>
-                            d.ItemID >= 0 ? `${d.Name} x${d.value}` : d.Name
-                        );
+                        .text(d => (d.ItemID >= 0 ? `${d.Name} x${d.value}` : d.Name));
 
                     const link = svg
                         .append("g")
@@ -158,29 +141,23 @@
                         .selectAll("text")
                         .data(graph.nodes)
                         .join("text")
-                        .attr("x", d =>
-                            d.x0 < this.width / 2 ? d.x1 + 6 : d.x0 - 6
-                        )
+                        .attr("x", d => (d.x0 < this.width / 2 ? d.x1 + 6 : d.x0 - 6))
                         .attr("y", d => (d.y1 + d.y0) / 2)
                         .attr("dy", "0.35em")
                         .attr("fill", "#FFF")
-                        .attr("text-anchor", d =>
-                            d.x0 < this.width / 2 ? "start" : "end"
-                        )
+                        .attr("text-anchor", d => (d.x0 < this.width / 2 ? "start" : "end"))
                         .text(d => `${d.Name}`);
                     return svg.node();
                 }
                 return null;
-            }
+            },
         },
         watch: {
             nodes: {
                 deep: true,
                 handler() {
                     let svg = this.generateSvg();
-                    let el = this.$el.getElementsByClassName(
-                        "svg-container"
-                    )[0];
+                    let el = this.$el.getElementsByClassName("svg-container")[0];
                     el.innerHTML = "";
                     el.append(svg);
                 },
@@ -190,12 +167,12 @@
 </script>
 
 <style>
-.s-link {
-    fill: none;
-    stroke: #FFF;
-    stroke-opacity: .2;
-}
-.s-link:hover {
-    stroke-opacity: .5 !important;
-}
+    .s-link {
+        fill: none;
+        stroke: #fff;
+        stroke-opacity: 0.2;
+    }
+    .s-link:hover {
+        stroke-opacity: 0.5 !important;
+    }
 </style>

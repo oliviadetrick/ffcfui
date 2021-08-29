@@ -28,9 +28,7 @@
 
             let linkCache = [];
             //sort by depth and name
-            nodes.sort(
-                (a, b) => a.depth - b.depth || a.name.localeCompare(b.name)
-            );
+            nodes.sort((a, b) => a.depth - b.depth || a.name.localeCompare(b.name));
             for (let i = 0; i < nodes.length; i++) {
                 let node = nodes[i];
                 if (node.ItemID < 0) {
@@ -43,28 +41,19 @@
                         ) {
                             let icon = h(FF14Icon, {
                                 "image-id": link.target.Icon,
-                                "title": link.target.Description
+                                title: link.target.Description,
                             });
-                            let text = h(
-                                "span",
-                                { class: "ms-2" },
-                                `${link.target.value}x ${link.target.Name}`
-                            );
+                            let text = h("span", { class: "ms-2" }, `${link.target.value}x ${link.target.Name}`);
                             subSteps.push(h("p", null, icon, text));
                             linkCache.push(link);
                         }
                     });
                     if (subSteps.length > 1) {
-                        let stepBody = h(
-                            "div",
-                            { class: "ms-2 me-auto" },
-                            subSteps
-                        );
+                        let stepBody = h("div", { class: "ms-2 me-auto" }, subSteps);
                         let stepElement = h(
                             "li",
                             {
-                                class:
-                                    "list-group-item d-flex align-items-start",
+                                class: "list-group-item d-flex align-items-start",
                             },
                             stepBody
                         );

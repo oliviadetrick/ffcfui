@@ -4,9 +4,7 @@
         <ul class="list-group">
             <li v-for="item in items" :key="item.id" class="list-group-item">
                 <div class="row">
-                    <label
-                        class="col-sm-4 col-form-label"
-                        v-bind:for="`recipe-${item._id}`">
+                    <label class="col-sm-4 col-form-label" v-bind:for="`recipe-${item._id}`">
                         <FF14Icon v-bind:image-id="item.ItemResult.Icon" />
                         {{ item.ItemResult.Name }}
                     </label>
@@ -20,12 +18,14 @@
                                 v-bind:value="item.Multiplier"
                                 v-bind:title="item.ItemResult.Name"
                                 v-bind:placeholder="item.ItemResult.Name || ''"
-                                min="1"/>
+                                min="1"
+                            />
                             <button
                                 class="btn btn-outline-danger"
                                 type="button"
                                 v-on:click="itemRemoved(item)"
-                                title="Delete">
+                                title="Delete"
+                            >
                                 X
                             </button>
                         </div>

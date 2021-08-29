@@ -68,9 +68,7 @@
             createItem: function(lookup, item) {
                 let label;
                 if (this.highlightTyped) {
-                    const idx = item.label
-                        .toLowerCase()
-                        .indexOf(lookup.toLowerCase());
+                    const idx = item.label.toLowerCase().indexOf(lookup.toLowerCase());
                     const className = Array.isArray(this.highlightClass)
                         ? this.highlightClass.join(" ")
                         : typeof this.highlightClass == "string"
@@ -78,14 +76,8 @@
                         : "";
                     label =
                         item.label.substring(0, idx) +
-                        `<span class="${className}">${item.label.substring(
-                            idx,
-                            idx + lookup.length
-                        )}</span>` +
-                        item.label.substring(
-                            idx + lookup.length,
-                            item.label.length
-                        );
+                        `<span class="${className}">${item.label.substring(idx, idx + lookup.length)}</span>` +
+                        item.label.substring(idx + lookup.length, item.label.length);
                 } else {
                     label = item.label;
                 }
@@ -99,9 +91,7 @@
             },
             createItems: function() {
                 const dropdown = this.getDropDown();
-                const field = dropdown._element.getElementsByTagName(
-                    "input"
-                )[0];
+                const field = dropdown._element.getElementsByTagName("input")[0];
                 const lookup = field.value;
                 if (lookup.length < this.treshold) {
                     dropdown.hide();
@@ -122,41 +112,29 @@
                         value: this.value ? entry[this.value] : entry,
                     };
 
-                    if (
-                        item.label
-                            .toLowerCase()
-                            .indexOf(lookup.toLowerCase()) >= 0
-                    ) {
+                    if (item.label.toLowerCase().indexOf(lookup.toLowerCase()) >= 0) {
                         items.appendChild(this.createItem(lookup, item));
-                        if (
-                            this.maximumItems > 0 &&
-                            ++count >= this.maximumItems
-                        )
-                            break;
+                        if (this.maximumItems > 0 && ++count >= this.maximumItems) break;
                     }
                 }
 
-                field.nextSibling
-                    .querySelectorAll(".dropdown-item")
-                    .forEach(item => {
-                        item.addEventListener("click", e => {
-                            let dataLabel = e.target.getAttribute("data-label");
-                            let dataValue = e.target.getAttribute("data-value");
+                field.nextSibling.querySelectorAll(".dropdown-item").forEach(item => {
+                    item.addEventListener("click", e => {
+                        let dataLabel = e.target.getAttribute("data-label");
+                        let dataValue = e.target.getAttribute("data-value");
 
-                            //this.field.value = dataLabel;
-                            if (this.onSelectItem) {
-                                this.onSelectItem(dataLabel, dataValue);
-                            }
+                        //this.field.value = dataLabel;
+                        if (this.onSelectItem) {
+                            this.onSelectItem(dataLabel, dataValue);
+                        }
 
-                            dropdown.hide();
-                        });
+                        dropdown.hide();
                     });
+                });
                 return items.childNodes.length;
             },
             getDropDown: function() {
-                return Dropdown.getOrCreateInstance(
-                    document.getElementById(this.id)
-                );
+                return Dropdown.getOrCreateInstance(document.getElementById(this.id));
             },
             onClick: function(e) {
                 if (this.createItems() === 0) {

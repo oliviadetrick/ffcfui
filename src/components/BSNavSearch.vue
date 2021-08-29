@@ -9,9 +9,11 @@
             :resolveOnLoad="false"
             :delay="250"
             :searchable="true"
-            :options="async function(query) {
+            :options="
+                async function(query) {
                     return await search(query);
-                }"
+                }
+            "
             :classes="{
                 search: 'multiselect-search form-control',
                 noOptions: 'visually-hidden',
@@ -37,9 +39,7 @@
                 this.$emit("select", value, option);
             },
             search: async function(query) {
-                let data = await json(
-                    "https://xivapi.com/search?indexes=recipe&string=" + query
-                );
+                let data = await json("https://xivapi.com/search?indexes=recipe&string=" + query);
                 return data.Results.map(i => {
                     return { value: i.ID, label: i.Name };
                 });
