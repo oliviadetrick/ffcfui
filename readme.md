@@ -1,4 +1,4 @@
-# FFCFUI
+# FF14 Crafting Calculator
 
 Wanted to make a simple crafting calculator for Final Fantasy 14 in the vein of similar calculators for games like Factorio, Satisfactory, etc.
 
