@@ -39,7 +39,7 @@
                 this.$emit("select", value, option);
             },
             search: async function(query) {
-                let data = await json("https://xivapi.com/search?indexes=recipe&string=" + query);
+                let data = await json("https://xivapi.com/search?indexes=recipe&limit=10&string=" + query);
                 return data.Results.map(i => {
                     return { value: i.ID, label: i.Name };
                 });
