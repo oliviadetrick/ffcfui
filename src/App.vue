@@ -1,5 +1,5 @@
 <template>
-    <BSNavBar nav-brand="FFCF" nav-class="navbar-dark" toggle-id="nav-main">
+    <BSNavBar nav-brand="FFXIV Crafting Calculator" nav-class="navbar-dark" toggle-id="nav-main">
         <BSNavBarNav :items="views" />
         <BSNavSearch id="searchBox" @select="onSelectRecipe" />
     </BSNavBar>
