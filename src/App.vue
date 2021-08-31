@@ -7,7 +7,7 @@
         <Index id="index" v-show="views[0].active" />
         <RecipeList
             id="recipeList"
-            :items="recipes"
+            :recipes="recipes"
             v-on:itemChanged="onRecipeChanged"
             v-on:itemRemoved="onRecipeRemoved"
             v-show="!views[0].active"
@@ -55,6 +55,7 @@
                         m = 1;
                     }
                     recipe.Multiplier = m;
+                    this.recipes.push(recipe);
                 }
                 value = searchParams.get(`i${++i}`);
             }
@@ -243,7 +244,7 @@
                 return this.recipeCache[i];
             },
             onRecipeChanged: async function(recipe, newValue) {
-                let i = this.recipeCache.indexOf(recipe);
+                let i = this.recipeCache.findIndex(r => r.ID === recipe.ID);
                 if (i >= 0 && recipe.Multiplier > 0) {
                     this.recipeCache[i].Multiplier = newValue;
                     await this.rebuild();

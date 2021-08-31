@@ -2,9 +2,9 @@
     <div class="container">
         <h1 class="display-6 text-light">Recipes</h1>
         <ul class="list-group">
-            <li v-for="item in items" :key="item.id" class="list-group-item">
+            <li v-for="item in recipes" :key="item.ID" class="list-group-item">
                 <div class="row">
-                    <label class="col-sm-4 col-form-label" v-bind:for="`recipe-${item._id}`">
+                    <label class="col-sm-4 col-form-label" v-bind:for="`recipe-${item.ID}`">
                         <FF14Icon v-bind:image-id="item.ItemResult.Icon" />
                         {{ item.ItemResult.Name }}
                     </label>
@@ -13,7 +13,7 @@
                             <input
                                 class="form-control"
                                 type="number"
-                                v-bind:name="`recipe-${item._id}`"
+                                v-bind:name="`recipe-${item.ID}`"
                                 v-on:change="itemChanged(item, $event)"
                                 v-bind:value="item.Multiplier"
                                 v-bind:title="item.ItemResult.Name"
@@ -45,7 +45,7 @@
             FF14Icon,
         },
         props: {
-            items: Array,
+            recipes: Array,
         },
         methods: {
             itemChanged: function(item, e) {
