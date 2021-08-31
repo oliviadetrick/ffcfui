@@ -8,6 +8,6 @@ Check it out [here](https://oliviadetrick.github.io/ffcfui/)!
 
 <dl>
     <dt><em>2021/08/30</em></dt>
-    <dd>Recipes that contain recipes should work now [#2](https://github.com/oliviadetrick/ffcfui/issues/2)</dd>
+    <dd>Recipes that contain recipes should work now (<a href="https://github.com/oliviadetrick/ffcfui/issues/2">#2</a>)</dd>
     <dd>Added highlighting to links when you hover over them.  This will likely change in the future.</dd>
 </dl>
