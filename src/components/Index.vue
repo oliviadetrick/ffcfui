@@ -18,6 +18,13 @@
         <hr />
         <h1 class="display-6">Changelog</h1>
         <dl>
+            <dt>2020/09/01</dt>
+            <dd>
+                Added popups for recipes with level requirements
+            </dd>
+            <dd>
+                Added links to Eorzea DB for items and recipes (searches only?)
+            </dd>
             <dt>2020/08/31</dt>
             <dd>
                 Quantity fields should work again

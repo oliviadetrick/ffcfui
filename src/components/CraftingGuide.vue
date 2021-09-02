@@ -1,5 +1,6 @@
 <script>
     import FF14Icon from "./FF14Icon";
+    import { Popover } from "bootstrap";
     import { h } from "vue";
 
     export default {
@@ -44,7 +45,25 @@
                                 title: link.target.Description,
                             });
                             let text = h("span", { class: "ms-2" }, `${link.target.value}x ${link.target.Name}`);
-                            subSteps.push(h("p", null, icon, text));
+                            let help = h("i", {
+                                "data-bs-html": true,
+                                "data-bs-toggle": "popover",
+                                "data-bs-trigger": "hover click",
+                                "data-bs-title": link.target.Name,
+                                "data-bs-content": link.target.Popover,
+                                title: link.target.Name,
+                                class: "bi bi-question-circle recipe-popover ms-1",
+                            });
+                            let eLinkIcon = h("i", {
+                                class: "bi bi-link"
+                            });
+                            let eLink = h("a", {
+                                href: "https://na.finalfantasyxiv.com/lodestone/playguide/db/search/?q=" + link.target.Name,
+                                target: "_blank",
+                                class: "ms-1 link-dark",
+                                title: "Search Eorzea Database for '" + link.target.Name + "'"
+                            }, eLinkIcon)
+                            subSteps.push(h("p", null, icon, text, help, eLink));
                             linkCache.push(link);
                         }
                     });
@@ -84,6 +103,17 @@
                 header,
                 list
             );
+        },
+        updated: function() {
+            let elements = document.getElementsByClassName("recipe-popover");
+            for (let i = 0; i < elements.length; i++) {
+                let el = elements.item(i);
+                let o = Popover.getInstance(el);
+                if (o) {
+                    o.dispose();
+                }
+                Popover.getOrCreateInstance(el);
+            }
         },
     };
 </script>

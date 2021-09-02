@@ -132,7 +132,7 @@
         methods: {
             addRecipe: async function(recipe) {
                 let recipeNode = this.getNode(recipe.ID);
-                if(recipeNode === null) {
+                if (recipeNode === null) {
                     recipeNode = this.createNode(recipe);
                     recipeNode.Resource = false;
                     recipeNode.CraftNode = this.createCraftNode(recipe.CraftType);
@@ -141,10 +141,10 @@
                 let ingredientNode = null;
                 for (let i = 0; i <= 9; i++) {
                     let amount = parseInt(recipe["AmountIngredient" + i]);
-                    if(amount > 0) {
+                    if (amount > 0) {
                         let ingredientRecipe = recipe["ItemIngredientRecipe" + i];
-                        if(typeof ingredientRecipe === "object" && ingredientRecipe !== null) {
-                            if(Array.isArray(ingredientRecipe)) {
+                        if (typeof ingredientRecipe === "object" && ingredientRecipe !== null) {
+                            if (Array.isArray(ingredientRecipe)) {
                                 ingredientRecipe = ingredientRecipe[0];
                             }
                             ingredientRecipe = await this.getRecipe(ingredientRecipe.ID);
@@ -152,16 +152,12 @@
                             ingredientNode = await this.addRecipe(ingredientRecipe);
                         } else {
                             let ingredient = recipe["ItemIngredient" + i];
-                            if(typeof ingredient === "object" && ingredient !== null) {
+                            if (typeof ingredient === "object" && ingredient !== null) {
                                 ingredientNode = this.getOrCreateNode(ingredient);
                             }
                         }
                         if (ingredientNode !== null) {
-                            this.createLink(
-                                ingredientNode,
-                                recipeNode.CraftNode,
-                                amount * recipe.Multiplier
-                            );
+                            this.createLink(ingredientNode, recipeNode.CraftNode, amount * recipe.Multiplier);
                         }
                     }
                 }
@@ -169,7 +165,7 @@
             },
             addRecipeToShoppingList: async function(id) {
                 let i = this.recipes.findIndex(r => r.ID === id);
-                if (i < 0){
+                if (i < 0) {
                     i = this.recipeCache.findIndex(r => r.ID === id);
                 }
                 if (i < 0) {
@@ -192,7 +188,7 @@
             },
             createCraftNode: function(source) {
                 this.craftingIndex = this.craftingIndex - 1;
-                let node =  {
+                let node = {
                     ItemID: this.craftingIndex,
                     Name: source.Name,
                 };
@@ -216,6 +212,16 @@
                     Resource: typeof source.Recipe === "undefined",
                     Icon: source.Icon,
                 };
+                if (source.CraftType) {
+                    node.Popover = `<strong>${source.CraftType.Name} lvl ${source.RecipeLevelTable.ClassJobLevel}</strong>`;
+                    if (source.SecretRecipeBook) {
+                        node.Popover = node.Popover + `<br/>${source.SecretRecipeBook.Name}`;
+                    }
+                    if (source.ItemResult.Description.length > 0) {
+                        node.Description = source.ItemResult.Description;
+                        node.Popover = node.Popover + `<br/><em>${source.ItemResult.Description}<em>`;
+                    }
+                }
                 this.pushNode(node);
                 return node;
             },

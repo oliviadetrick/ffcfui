@@ -33,6 +33,13 @@
                         <div class="col-8">
                             <FF14Icon v-bind:image-id="node.Icon" v-bind:title="node.Description" />
                             <span class="ms-2">{{ node.Name }}</span>
+                            <a
+                                v-bind:href="'https://na.finalfantasyxiv.com/lodestone/playguide/db/search/?q=' + node.Name"
+                                target="_blank"
+                                class="ms-1 link-dark"
+                                v-bind:title="'Search Eorzea Database for \'' + node.Name + '\''">
+                                <i class="bi bi-link"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
