@@ -7,6 +7,9 @@ Check it out [here](https://oliviadetrick.github.io/ffcfui/)!
 ## Changelog
 
 <dl>
+    <dt>2020/09/01</dt>
+    <dd>Added popups for recipes with level requirements</dd>
+    <dd>Added links to Eorzea DB</dd>
     <dt>2020/08/31</dt>
     <dd>Quantity fields should work again (<a href="https://github.com/oliviadetrick/ffcfui/issues/3">#3</a>)</dd>
     <dt><em>2021/08/30</em></dt>
